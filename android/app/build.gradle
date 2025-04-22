@@ -1,0 +1,61 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+
+android {
+    namespace = "com.example.mobile"
+    compileSdk = 34 // Ensure you have SDK 34 installed in Android Studio
+
+    defaultConfig {
+        minSdk = 21 // Match Flutter's minimum supported version
+        targetSdk = 34 // Should match compileSdk
+        applicationId = "com.example.mobile"
+        versionCode flutter.versionCode // Ensure flutter.versionCode is defined in pubspec.yaml
+        versionName flutter.versionName // Ensure flutter.versionName is defined in pubspec.yaml
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    signingConfigs {
+        release {
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+        }
+    }
+    buildTypes {
+       release {
+        signingConfig signingConfigs.release
+        minifyEnabled true
+        shrinkResources true
+        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    }
+ }
+
+
+    // Ensure the configurations are consistent with the plugins you are using
+    lintOptions {
+        abortOnError false
+    }
+}
+
+flutter {
+    source = "../.."
+}
